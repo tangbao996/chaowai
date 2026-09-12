@@ -1,4 +1,4 @@
-const BASE_SYSTEM = `你是「吵架外挂 V0.3」的中文互联网回击引擎。
+const BASE_SYSTEM = `你是「吵架外挂 V0.4」的中文互联网回击引擎。
 你的任务不是讲道理，不是心理咨询，不是客服式沟通；而是准确抓住对方这句话里最可笑、最越界、最双标、最装、最站不住脚的一个点，生成短、狠、损、自然、像真人临场接出来的回击。
 
 风格重点：贴吧、QQ群、游戏群、评论区、朋友互损的中文互联网语感。高火力允许普通粗口，但粗口必须服务于笑点和反杀，不能只是堆脏字。
@@ -64,6 +64,8 @@ function styleNote(style){
     '阴阳一下':'冷幽默、假夸真损、装傻拆招。',
     '贴吧老哥':'最大化贴吧跟帖感、意外梗、反问卸权、角色错位。',
     '化粪池':'嘴臭和节目效果优先，允许普通粗口，但必须有梗、有针对性。',
+    '疯狗模式':'连续轰炸感优先：短句、高密度、快节奏、明显粗口和嘲讽，但不得现实威胁、攻击家人或做性羞辱。',
+    '番茄连招':'高速联想连招：从对方原话抽一个锚词，围绕它做重复前缀、词义跳跃、荒诞升级和突然收尾；像失控的口头连招，但必须针对原话。',
     '强硬反击':'短、硬、不给继续越界空间。',
     '结束争论':'一句收口，不给新素材。'
   })[style] || '不吃亏。';
@@ -110,9 +112,15 @@ async function predict(body,model){
 async function generateCandidates(body,model){
   const raw=clamp(body.fire||3);
   const fire=relationCap(body.relation||'网友',raw);
-  const profanity = (body.style==='化粪池'||fire>=5)
-    ? '强度要求：明显嘴臭。12条里至少一半要有明显攻击性；可以有少量普通粗口，但不要条条都脏。'
-    : fire>=4 ? '强度要求：明显比普通阴阳更狠，不能文明收口。' : '强度要求：有刺、有梗。';
+  const isMadDog = body.style==='疯狗模式';
+  const isTomato = body.style==='番茄连招';
+  const profanity = isMadDog
+    ? '强度要求：连续轰炸感拉满。允许明显粗口和高密度嘲讽，短句连发，但禁止现实威胁、攻击家人、性羞辱、疾病残障攻击和仇恨内容。'
+    : isTomato
+      ? '强度要求：重点不是脏，而是连招节奏。必须从原话抽一个锚词，做4到9段快速联想，重复、变形、跳义、荒诞升级，最后突然收尾。'
+      : (body.style==='化粪池'||fire>=5)
+        ? '强度要求：明显嘴臭。12条里至少一半要有明显攻击性；可以有少量普通粗口，但不要条条都脏。'
+        : fire>=4 ? '强度要求：明显比普通阴阳更狠，不能文明收口。' : '强度要求：有刺、有梗。';
   const user=`
 关系：${body.relation||'网友'}
 风格：${body.style||'贴吧老哥'}
@@ -131,10 +139,12 @@ TA最新一句：${safeText(body.message,4000)}
 - 至少3条要有明显“突然拐弯”的意外感；
 - 至少3条是极短一句封喉；
 - 不要为了强度编造事实。
+${isMadDog ? `- 疯狗模式额外要求：至少6条采用“短句连续轰炸”，每条可有2到5个短分句；不要文明总结，不要讲道理；粗口只攻击当前话术和行为，不碰家人、身体伤害、性暴力。` : ''}
+${isTomato ? `- 番茄连招额外要求：至少8条必须是“连招型”。先提取一个anchor（最好来自TA原话），然后用 anchor+词A → anchor+词B → 语义突然跳转 → 荒诞升级 → 一句暴击收尾。允许重复词制造节奏，允许故意越来越离谱，但必须还能听出是在回这句话。不要复刻任何现成网络台词。` : ''}
 
 输出 JSON：{"target":"最值得打的点","candidates":[{"id":1,"text":"","tactic":"","heat":1},{"id":2,"text":"","tactic":"","heat":1}]}
 heat 为1到5。`;
-  const d=await callModel({system:GEN_SYSTEM,user,temperature:(body.style==='化粪池'||fire>=5)?1.5:1.32,max_tokens:2200,model});
+  const d=await callModel({system:GEN_SYSTEM,user,temperature:(isMadDog||isTomato||body.style==='化粪池'||fire>=5)?1.55:1.32,max_tokens:(isTomato?2600:2200),model});
   if(!d || !Array.isArray(d.candidates)) return null;
   const candidates=d.candidates.slice(0,12).map((x,i)=>({id:Number(x.id)||i+1,text:safeText(x.text,120),tactic:safeText(x.tactic,24),heat:clamp(x.heat)})).filter(x=>x.text);
   return {target:safeText(d.target,100),candidates,fire};
@@ -157,10 +167,12 @@ ${gen.candidates.map(x=>`${x.id}. [${x.tactic}/火力${x.heat}] ${x.text}`).join
 - B、C必须明显比A更有杀伤力；
 - 如果候选普遍太文明，主动重写得更损，不要迁就候选；
 - 不得编造事实，不得触碰硬规则。
+${body.style==='疯狗模式' ? `- 疯狗模式：B/C必须明显有连续轰炸和上头感，不能只是一句精致阴阳。可以粗口密集一点，但不能出现现实暴力威胁、家人羞辱或性暴力内容。` : ''}
+${body.style==='番茄连招' ? `- 番茄连招：B/C必须保留“锚词反复 + 词义跳跃 + 越来越离谱 + 突然收尾”的连招结构。B偏好笑，C偏狠。不要把它改回普通一句话。` : ''}
 
 输出严格 JSON：
 {"diagnosisTitle":"8到16字","diagnosisText":"1到2句","tactic":"本轮主打法","replies":{"A":{"text":"","risk":1,"tag":""},"B":{"text":"","risk":2,"tag":""},"C":{"text":"","risk":3,"tag":""}},"recommended":"A或B或C","reason":"","satisfaction":1,"overallRisk":1}`;
-  return callModel({system:JUDGE_SYSTEM,user,temperature:0.95,max_tokens:1300,model});
+  return callModel({system:JUDGE_SYSTEM,user,temperature:(body.style==='番茄连招'?1.08:body.style==='疯狗模式'?1.02:0.95),max_tokens:1500,model});
 }
 
 function normalize(d,model,fire){
