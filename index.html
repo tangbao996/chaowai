@@ -18,7 +18,7 @@
           <p class="tagline">不会回？把对方的话丢进来。</p>
         </div>
       </div>
-      <div class="badge">V 0.1 · DeepSeek Ready</div>
+      <div class="badge">V 0.2 · Tieba Engine</div>
     </header>
 
     <section class="card composer">
@@ -46,19 +46,20 @@
           <button class="chip" data-value="高情商">高情商</button>
           <button class="chip" data-value="阴阳一下">阴阳一下</button>
           <button class="chip" data-value="贴吧老哥">贴吧老哥 😏</button>
+          <button class="chip" data-value="化粪池">化粪池 ☣️</button>
           <button class="chip" data-value="强硬反击">强硬反击</button>
           <button class="chip" data-value="结束争论">结束争论</button>
         </div>
       </div>
 
       <div class="field-block">
-        <div class="section-title fire-title"><span>火力</span><span id="fireLabel">3级 · 带刺</span></div>
+        <div class="section-title fire-title"><span>火力</span><span id="fireLabel">3级 · 贴吧</span></div>
         <input id="fire" type="range" min="1" max="5" value="3" step="1" />
-        <div class="fire-scale"><span>🌱 温和</span><span>☢️ 核武</span></div>
+        <div class="fire-scale"><span>🌱 文明人</span><span>☣️ 化粪池</span></div>
       </div>
 
       <button id="submit" class="primary">开怼</button>
-      <p class="hint">贴吧老哥模式：有梗地反杀，不靠无脑脏话。</p>
+      <p class="hint">高火力不是堆脏字：要损、要欠、要有梗，还得像真人临场回的。</p>
     </section>
 
     <section id="loading" class="card loading hidden">
@@ -69,23 +70,24 @@
     <section id="result" class="results hidden">
       <div class="card diagnosis">
         <div class="eyebrow">军师判断 <span id="engineBadge" class="engine-badge">AI</span></div>
+        <div id="tacticBadge" class="tactic-badge">打法 · 分析中</div>
         <h2 id="diagnosisTitle">对方在阴阳你</h2>
         <p id="diagnosisText"></p>
       </div>
 
       <div class="reply-grid">
         <article class="reply-card recommended" id="cardA">
-          <div class="reply-head"><span class="pill">A · 最稳</span><span class="risk" id="riskA"></span></div>
+          <div class="reply-head"><span class="pill">A · 最稳</span><span class="mini-tag" id="tagA"></span><span class="risk" id="riskA"></span></div>
           <p id="replyA"></p>
           <button class="copy" data-target="replyA">复制这句</button>
         </article>
         <article class="reply-card" id="cardB">
-          <div class="reply-head"><span class="pill">B · 带刺</span><span class="risk" id="riskB"></span></div>
+          <div class="reply-head"><span class="pill">B · 贴吧味</span><span class="mini-tag" id="tagB"></span><span class="risk" id="riskB"></span></div>
           <p id="replyB"></p>
           <button class="copy" data-target="replyB">复制这句</button>
         </article>
         <article class="reply-card" id="cardC">
-          <div class="reply-head"><span class="pill">C · 高火力</span><span class="risk" id="riskC"></span></div>
+          <div class="reply-head"><span class="pill">C · 最狠</span><span class="mini-tag" id="tagC"></span><span class="risk" id="riskC"></span></div>
           <p id="replyC"></p>
           <button class="copy" data-target="replyC">复制这句</button>
         </article>

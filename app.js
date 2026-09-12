@@ -2,7 +2,7 @@ const $=s=>document.querySelector(s);
 let relation='对象',style='不吃亏',lastPayload=null,lastResult=null;
 let history=[];
 const message=$('#message'),count=$('#count'),fire=$('#fire'),fireLabel=$('#fireLabel');
-const labels={1:'1级 · 温和',2:'2级 · 克制',3:'3级 · 带刺',4:'4级 · 强硬',5:'5级 · 核武'};
+const labels={1:'1级 · 文明人',2:'2级 · 阴阳',3:'3级 · 贴吧',4:'4级 · 嘴臭',5:'5级 · 化粪池'};
 message.addEventListener('input',()=>count.textContent=message.value.length);
 fire.addEventListener('input',()=>fireLabel.textContent=labels[fire.value]);
 function bindChips(id,setter){document.querySelectorAll(`#${id} .chip`).forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll(`#${id} .chip`).forEach(x=>x.classList.remove('active'));btn.classList.add('active');setter(btn.dataset.value)}))}
@@ -14,11 +14,13 @@ function render(data){
   lastResult=data;
   $('#diagnosisTitle').textContent=data.diagnosisTitle;
   $('#diagnosisText').textContent=data.diagnosisText;
+  const tactic=$('#tacticBadge'); if(tactic) tactic.textContent=`打法 · ${data.tactic||'临场反杀'}`;
   const badge=$('#engineBadge');
   if(badge){badge.textContent=data.engine==='deepseek'?'DeepSeek AI':'演示模式';badge.classList.toggle('demo',data.engine!=='deepseek')}
   ['A','B','C'].forEach(k=>{
     $(`#reply${k}`).textContent=data.replies[k].text;
     $(`#risk${k}`).textContent=`翻车 ${stars(data.replies[k].risk)}`;
+    const tag=$(`#tag${k}`); if(tag) tag.textContent=data.replies[k].tag||'';
   });
   document.querySelectorAll('.reply-card').forEach(c=>c.classList.remove('recommended'));
   $(`#card${data.recommended||'B'}`).classList.add('recommended');
