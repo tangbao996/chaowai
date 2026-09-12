@@ -1,0 +1,21 @@
+《吵架外挂》GitHub 手机上传说明
+
+重要：不要把 ZIP 文件直接上传到 GitHub 仓库。请先在 iPhone“文件”App 中解压。
+
+仓库：tangbao996/chaowai
+
+需要放到仓库根目录的文件：
+1. index.html
+2. style.css
+3. app.js
+4. package.json
+5. vercel.json
+6. README.md
+
+另外需要一个 api 文件夹，里面放：
+api/reply.js
+
+注意：
+- 不要把 DeepSeek API Key 写入任何 GitHub 文件。
+- 你的 Key 继续放在 Vercel 的 Environment Variables 里，变量名必须是 DEEPSEEK_API_KEY。
+- 上传完成后，再把 GitHub 仓库连接到原来的 Vercel 项目 chaowai，并重新部署。

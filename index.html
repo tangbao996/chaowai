@@ -1,1 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0b0f" />
+  <title>吵架外挂｜AI回击军师</title>
+  <meta name="description" content="把对方的话丢进来，AI帮你分析局势并生成最稳、带刺和高火力三种回复。" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="brand-row">
+        <div class="logo">怼</div>
+        <div>
+          <h1>吵架外挂</h1>
+          <p class="tagline">不会回？把对方的话丢进来。</p>
+        </div>
+      </div>
+      <div class="badge">V 0.1 · DeepSeek Ready</div>
+    </header>
 
+    <section class="card composer">
+      <label class="section-title" for="message">TA说了什么？</label>
+      <textarea id="message" maxlength="1200" placeholder="例如：你工资才这么点，还天天买这些没用的东西。"></textarea>
+      <div class="counter"><span id="count">0</span>/1200</div>
+
+      <div class="field-block">
+        <div class="section-title">TA是我的</div>
+        <div class="chips" id="relationChips">
+          <button class="chip active" data-value="对象">对象</button>
+          <button class="chip" data-value="前任">前任</button>
+          <button class="chip" data-value="朋友">朋友</button>
+          <button class="chip" data-value="同事">同事</button>
+          <button class="chip" data-value="领导">领导</button>
+          <button class="chip" data-value="亲戚">亲戚</button>
+          <button class="chip" data-value="网友">网友</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <div class="section-title">我想怎么回</div>
+        <div class="chips" id="styleChips">
+          <button class="chip active" data-value="不吃亏">不吃亏</button>
+          <button class="chip" data-value="高情商">高情商</button>
+          <button class="chip" data-value="阴阳一下">阴阳一下</button>
+          <button class="chip" data-value="贴吧老哥">贴吧老哥 😏</button>
+          <button class="chip" data-value="强硬反击">强硬反击</button>
+          <button class="chip" data-value="结束争论">结束争论</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <div class="section-title fire-title"><span>火力</span><span id="fireLabel">3级 · 带刺</span></div>
+        <input id="fire" type="range" min="1" max="5" value="3" step="1" />
+        <div class="fire-scale"><span>🌱 温和</span><span>☢️ 核武</span></div>
+      </div>
+
+      <button id="submit" class="primary">开怼</button>
+      <p class="hint">贴吧老哥模式：有梗地反杀，不靠无脑脏话。</p>
+    </section>
+
+    <section id="loading" class="card loading hidden">
+      <div class="spinner"></div>
+      <div>军师正在看战局……</div>
+    </section>
+
+    <section id="result" class="results hidden">
+      <div class="card diagnosis">
+        <div class="eyebrow">军师判断 <span id="engineBadge" class="engine-badge">AI</span></div>
+        <h2 id="diagnosisTitle">对方在阴阳你</h2>
+        <p id="diagnosisText"></p>
+      </div>
+
+      <div class="reply-grid">
+        <article class="reply-card recommended" id="cardA">
+          <div class="reply-head"><span class="pill">A · 最稳</span><span class="risk" id="riskA"></span></div>
+          <p id="replyA"></p>
+          <button class="copy" data-target="replyA">复制这句</button>
+        </article>
+        <article class="reply-card" id="cardB">
+          <div class="reply-head"><span class="pill">B · 带刺</span><span class="risk" id="riskB"></span></div>
+          <p id="replyB"></p>
+          <button class="copy" data-target="replyB">复制这句</button>
+        </article>
+        <article class="reply-card" id="cardC">
+          <div class="reply-head"><span class="pill">C · 高火力</span><span class="risk" id="riskC"></span></div>
+          <p id="replyC"></p>
+          <button class="copy" data-target="replyC">复制这句</button>
+        </article>
+      </div>
+
+      <div class="card recommendation">
+        <div>
+          <div class="eyebrow">外挂推荐</div>
+          <h3 id="recommended">推荐 B</h3>
+          <p id="reason"></p>
+        </div>
+        <div class="scorebox">
+          <div><span>爽感</span><strong id="satisfaction">★★★★☆</strong></div>
+          <div><span>翻车风险</span><strong id="overallRisk">★★☆☆☆</strong></div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="predict" class="secondary">预测TA下一句</button>
+        <button id="again" class="secondary">TA又回了</button>
+      </div>
+
+      <div id="prediction" class="card prediction hidden">
+        <div class="eyebrow">TA下一句可能是</div>
+        <ol id="predictionList"></ol>
+        <div class="counterattack"><span>提前准备：</span><b id="counterattack"></b></div>
+      </div>
+    </section>
+
+    <footer>吵架外挂 · 别急着发，先看看翻车风险</footer>
+  </main>
+
+  <div id="toast" class="toast">已复制</div>
+  <script src="/app.js"></script>
+</body>
+</html>
